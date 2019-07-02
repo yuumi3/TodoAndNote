@@ -14,7 +14,8 @@ class DetailViewController: UIViewController, WKNavigationDelegate, WKScriptMess
     @IBOutlet weak var markdownWebView: WKWebView!
     @IBOutlet weak var switchViewButton: UIBarButtonItem!
     @IBOutlet weak var clearButton: UIBarButtonItem!
-    
+    private var activityIndicatorView = UIActivityIndicatorView()
+
     private let MarkdownKeys : [(title: String, text: String)] = [
         ("-[]", "- [ ] "),
         ("TAB", "   "),
@@ -24,12 +25,9 @@ class DetailViewController: UIViewController, WKNavigationDelegate, WKScriptMess
         ("##", "## ")]
 
     private var originalSource: String?
-    private let dropbox = Dropbox.shared
-    private var keyboardHeight: CGFloat?
+    private var entries = Entries.shared
     
-    var filePathname: String? {
-        didSet { reloadDocument() }
-    }
+    var fileId: String?
 
     @IBAction func pushSwitchViewButton(_ sender: Any) {
         if markdownWebView.isHidden {
@@ -45,22 +43,26 @@ class DetailViewController: UIViewController, WKNavigationDelegate, WKScriptMess
             switchViewButton.image = UIImage(named: "markdown-icon")
         }
     }
-    
+
     @IBAction func pushClearButton(_ sender: Any) {
-        updateSourceFile()
-        sourceTextView?.text = nil
-        originalSource = nil
-        refreshMarkedown()
-        switchViewButton.isEnabled = false
-        clearButton.isEnabled = false
-        self.navigationItem.title = "TodoAndNote"
+        if !markdownWebView.isHidden && markdownWebView.canGoBack {
+             markdownWebView.goBack()
+        } else {
+            updateSourceFile()
+            sourceTextView?.text = nil
+            originalSource = nil
+            refreshMarkedown()
+            switchViewButton.isEnabled = false
+            clearButton.isEnabled = false
+            self.navigationItem.title = "TodoAndNote"
+        }
      }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         addKeyboradToolbar()
-        
+
         sourceTextView.isHidden = true
         switchViewButton.isEnabled = false
         switchViewButton.title = "Edit"
@@ -71,45 +73,67 @@ class DetailViewController: UIViewController, WKNavigationDelegate, WKScriptMess
         let urlRequest = URLRequest(url: url)
         markdownWebView.load(urlRequest)
         markdownWebView.configuration.userContentController.add(self, name: "changeCheckbox")
+        markdownWebView.configuration.userContentController.add(self, name: "printLog")
+
+        activityIndicatorView.style = .whiteLarge
+        activityIndicatorView.color = .black
+        self.navigationController?.view.addSubview(activityIndicatorView)
 
         NotificationCenter.default.addObserver(forName: .reloadDocument, object: nil, queue: OperationQueue.main, using: { notification in
-            self.reloadDocument()
-        })
-        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: OperationQueue.main, using: { notification in
-            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                self.keyboardHeight = keyboardFrame.cgRectValue.height
-                self.changeSourceTextViewHeght(-keyboardFrame.cgRectValue.height)
+            if let path = notification.object {
+                self.fileId = path as? String
+                self.reloadDocument()
             }
         })
-        NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidHideNotification, object: nil, queue: OperationQueue.main, using: { notification in
-            if let height = self.keyboardHeight {
-                self.changeSourceTextViewHeght(height)
-            }
-        })
-
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        activityIndicatorView.center = view.center
+        reloadDocument()
+    }
+
+    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+    }
+
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError: Error) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+    }
+    
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        let param = message.body as! String
-        let to_check = param.prefix(1) == "1"
-        var text = NSRegularExpression.escapedPattern(for: String(param.suffix(param.count - 1)))
-        if let ixNL = text.firstIndex(of: "\n") {
-            text = String(text.prefix(upTo: ixNL))
+        switch message.name {
+        case "printLog":
+            print("--JS: \(message.body as! String)")
+        case "changeCheckbox":
+            let param = message.body as! Int
+            let postion = param / 10
+            let checked = (param % 10) == 1
+            // print("-- \(postion) : \(checked)")
+            var source = sourceTextView.text ?? ""
+            let regexp = try! NSRegularExpression(pattern: "- \\[.\\] ")
+            let matches = regexp.matches(in: source, range: NSMakeRange(0, source.count))
+            if matches.count >= postion {
+                let range = matches[postion - 1].range
+                let startIx = source.index(source.startIndex, offsetBy: range.lowerBound)
+                let endIx   = source.index(source.startIndex, offsetBy: range.upperBound)
+                source.replaceSubrange(startIx..<endIx, with: checked ? "- [x] " : "- [ ] ")
+
+                sourceTextView.text = source
+                updateSourceFile()
+                refreshMarkedown()
+            }
+        default:
+            print("Error message \(message.name) on userContentController")
         }
-        let pattern = "- \\[\(to_check ? " " : "x")\\]\\s*\(text)"
-        let replace = to_check ? "- [x]\(text)" : "- [ ]\(text)"
-        // print(pattern, replace)
-        
-        let regex = try! NSRegularExpression(pattern: pattern)
-        let source = sourceTextView.text ?? ""
-        sourceTextView.text = regex.stringByReplacingMatches(in: source, options: [],
-                                                             range: NSMakeRange(0, source.count), withTemplate: replace)
-        updateSourceFile()
-        refreshMarkedown()
     }
 
     // ------------------------------------------------------------------
-    
+
     private func addKeyboradToolbar() {
         let keyboardToolbar = UIToolbar(frame:CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 40))
         keyboardToolbar.barStyle = .default
@@ -129,40 +153,36 @@ class DetailViewController: UIViewController, WKNavigationDelegate, WKScriptMess
     }
 
     private func reloadDocument() {
-        if let path = filePathname {
-            dropbox.downloadContent(pathname: path, complete: { content in
-                self.sourceTextView.text = content
-                self.originalSource = content
-                self.refreshMarkedown()
+        if let fileId = self.fileId {
+            self.activityIndicatorView.startAnimating()
+            self.entries.read(fileId: fileId) { source in
+                self.originalSource = source
+                self.sourceTextView.text = source
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.refreshMarkedown()
+                    self.activityIndicatorView.stopAnimating()
+                }
                 self.switchViewButton.isEnabled = true
                 self.clearButton.isEnabled = true
-                self.navigationItem.title = Entries.filenameFromPath(path)
-            })
+                self.navigationItem.title = self.entries.getTitle(fileId: fileId)
+            }
         }
     }
 
 
     private func refreshMarkedown() {
-        let text = (sourceTextView.text ?? "").replacingOccurrences(of: "\n", with: "\\n").replacingOccurrences(of: "'", with: "\\'")
-        let js = "var md = '" + text + "'; document.getElementById('content').innerHTML = marked(md); checkbox_callback();"
+        let text = (self.originalSource ?? "").replacingOccurrences(of: "\n", with: "\\n").replacingOccurrences(of: "'", with: "\\'")
+        let js = "var md = '" + text + "'; document.getElementById('content').innerHTML = marked(md, {renderer: rendererEx}); checkbox_callback();"
         self.markdownWebView.evaluateJavaScript(js, completionHandler: { (object, error) in
-            //print(error ?? "OK")
+            print(error ?? "OK")
         })
     }
 
     private func updateSourceFile() {
-        if sourceTextView.text != originalSource && self.filePathname != nil {
-            dropbox.uploadContent(pathname: self.filePathname!, content: sourceTextView.text,
-                                  complete: {
-                                    self.originalSource = self.sourceTextView.text
-            })
+        if sourceTextView.text != originalSource && self.fileId != nil {
+            self.entries.write(fileId: self.fileId!, content: sourceTextView.text)
+            self.originalSource = self.sourceTextView.text
         }
-    }
-    
-    private func changeSourceTextViewHeght(_ height: CGFloat) {
-        var frame = self.sourceTextView.frame
-        frame.size.height += height
-        self.sourceTextView.frame = frame
     }
 }
 

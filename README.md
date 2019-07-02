@@ -2,11 +2,11 @@
 
 ## Description
 
-Dropbox でファイル共有出来るiOS用のMarkdownエディター
+GoogleDrive でファイル共有出来るiOS用のMarkdownエディター
 
 - task lists (checkbox) が書けるので TODO管理としても使えます
 - Markdownのパース・表示は [Marked.js](https://github.com/markedjs/marked) を使っています
-- Dropboxの `Notes/`  フォルダー下のファイルのみ扱います、また Notes/ フォルダーの直下にフォルダーを作れます(ただし、フォルダーの作成・管理機能はありません)
+- GoogleDriveの `Notes/`  フォルダー下のファイルのみ扱います、また Notes/ フォルダーの直下にフォルダーを作れます(ただし、フォルダーの作成・管理機能はありません)
 - MarkdowファイルにTag(カラーバー)を追加出来ます。この管理情報は `.attributes.json` ファイルに書かれています
 - Markdowのバックアップ機能は `zBackup/` フォルダに日付付きファイルのコピーを作ります
 
@@ -14,9 +14,15 @@ Dropbox でファイル共有出来るiOS用のMarkdownエディター
 
 ## Build
 
-Dropbox とのインタフェースは [Dropbox Swift SDK](https://www.dropbox.com/developers/documentation/swift) ライブラリーを使っています。Dropbox Swift SDK  のインストールには Carthageを使っています、インストール手順は [Dropbox Swift SDK ](https://github.com/dropbox/SwiftyDropbox#carthage) を参照して下さい。
+* Podのインストール
 
-また、[Build your app on the DBX Platform の Create your app](https://www.dropbox.com/developers/apps/create) で新規アプリを登録し App key を取得し TodoAndNote/Info.plist に登録する必要があります
+```
+$ pod install
+```
+
+* Google Drive APIの OAuth 2.0 クライアントIDを設定
+
+[Google Developer Console](https://console.developers.google.com/?hl=JA)で *OAuth 2.0 クライアント ID* の *認証情報を作成* し、クライアント ID(ドメイン名)を逆順にし、 *Info.plist* の *CFBundleURLSchemes* に書き込む
 
 ~~~xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -30,7 +36,7 @@ Dropbox とのインタフェースは [Dropbox Swift SDK](https://www.dropbox.c
                 <dict>
                         <key>CFBundleURLSchemes</key>
                         <array>
-                                <string>db-＊ここにApp keyを設定＊</string>
+                                <string>＊ここにクライアントIDの逆ドメイン名を設定＊</string>
                         </array>
                         <key>CFBundleURLName</key>
                         <string></string>

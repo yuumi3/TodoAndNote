@@ -7,92 +7,128 @@
 //
 
 import Foundation
-import SwiftyDropbox
 
 
 class Entries {
-    private static let PREFIX_ITEM = "Notes"
-    static let PREFIX = "/" + PREFIX_ITEM
-    static let PREFIX_DIR = PREFIX.lowercased() + "/"
-    static let ATTRIBUTES_FILE = PREFIX_DIR + ".attributes.json"
-    static let BACKUP_DIR = PREFIX_DIR + "zBackup"
+    private init() {}
+    static let shared = Entries()
+    
 
-    private var entries: [Files.Metadata] = []
-    private(set) var folders: [String] = [""]
-    private(set) var files: [[String]] = [[]]
-    private(set) var attributes: [[[String:String]]] = [[]]
+    static let ATTRIBUTES_FILE = ".attributes.json"
+    static let BACKUP_DIR = "zBackup"
+    static let MARKDOWN_EXT = ".md"
 
-    init(entries: [Files.Metadata], attributeJson: String) {
-        self.entries = entries
-        for entry in entries {
-            if let folder = (entry as? Files.FolderMetadata) {
-                let path = folder.pathLower!
-                if path.hasPrefix(Entries.PREFIX_DIR) {
-                    folders.append(folder.name)
-                    files.append([])
-                    attributes.append([])
-                 }
+    private let drive = GoogleDrive.shared
+    private(set) var folders: [String] = []
+    private(set) var files: [[String]] = []
+    private(set) var attributes: [[[String:String]]] = []
+    private(set) var firstOpenFileId: String?
+    private(set) var foldersId: [String] = []
+    private(set) var filesId: [[String]] = []
+    private(set) var backupFolderId:String?
+
+    private var containerUrl: URL = URL(fileURLWithPath: "/")
+
+
+    func reload(completion: @escaping () -> Void) {
+        drive.listNots { list in
+            self.folders = []
+            self.files = []
+            self.foldersId = []
+            self.filesId = []
+
+            var attrbuteFileId: String?
+
+            list.forEach { entry in
+                if entry.isFolder {
+                    self.folders.append(entry.id == self.drive.notesFolderId  ? "" : entry.name)
+                    self.foldersId.append(entry.id)
+                    self.files.append([])
+                    self.filesId.append([])
+                    self.attributes.append([])
+                    if entry.name == Entries.BACKUP_DIR {
+                        self.backupFolderId = entry.id
+                    }
+                } else {
+                    if entry.name == Entries.ATTRIBUTES_FILE {
+                        attrbuteFileId = entry.id
+                    } else {
+                        let folderIx = self.foldersId.firstIndex(of: entry.parentId)!
+                        self.files[folderIx].append(entry.name)
+                        self.filesId[folderIx].append(entry.id)
+                        self.attributes[folderIx].append([:])
+                        if folderIx == 0 && entry.name == "TODO.md" {
+                            self.firstOpenFileId = entry.id
+                        }
+                    }
+                }
             }
-        }
-        folders.sort()
-
-        for entry in entries {
-            if let file = (entry as? Files.FileMetadata){
-                let path = file.pathLower!
-                if Entries.isMarkdown(file.name) {
-                    files[findFolder(path)].append(file.name)
-                    attributes[findFolder(path)].append([:])
+            // print("+++ list \(self.dump)")
+            if let attrId = attrbuteFileId {
+                self.drive.download(attrId) {jsonString in
+                    // print("+++ \(jsonString)")
+                    self.decodeAttributesJson(jsonString)
+                    completion()
                 }
             }
         }
-        for i in 0..<folders.count { files[i].sort() }
+    }
+    
+    func read(fileId: String, completion: @escaping (String) -> Void) {
+        drive.download(fileId) { completion($0) }
+    }
+
+    func write(fileId: String, content: String) {
+        drive.upload(fileId, content: content)
+    }
+    
+    func create(_ fileName: String, folderId: String,  completion: ((String) -> Void)? = nil) {
+        drive.createFile(fileName, parent: folderId, completion: completion)
+    }
+    
+    func createBackup(_ fileName: String,  completion: @escaping (String) -> Void) {
+        guard backupFolderId != nil else { return }
         
-        decodeAttributesJson(attributeJson)
-        //print(encodeAttributesJson())
-    }
-    
-    init() {
-    }
-    
-    func pathname(folderNo: Int, filename: String, addExtention: String? = nil) -> String {
-        let secondFolder = folderNo == 0 ? "" :  folders[folderNo] + "/"
-        let ext = addExtention == nil ? "" : (filename.contains(".") ? "" : addExtention!)
-        return Entries.PREFIX + "/" + secondFolder + filename + ext
-    }
-
-    func pathname(folderNo: Int, fileNo: Int) -> String {
-        return pathname(folderNo: folderNo, filename: files[folderNo][fileNo])
-    }
-
-    func backupPathname(folderNo: Int, fileNo: Int) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd"
         let today = dateFormatter.string(from: Date())
 
-        return Entries.BACKUP_DIR + "/" + today + "_" + files[folderNo][fileNo]
+        drive.createFile(today + "_" + fileName, parent: backupFolderId, completion: completion)
+    }
+    
+    func writeAttributes() {
     }
 
-    func index(byPathname: String) -> (folderNo:Int, fileNo:Int)? {
-        var items = byPathname.split(separator: "/")
-        if items.count > 0 && items[0] == Entries.PREFIX_ITEM { items.remove(at: 0) }
+    func delete(fileId: String) {
+        drive.delete(fileId)
+    }
 
-        if items.count == 1 {
-            if let fileNo = files[0].firstIndex(of: String(items[0])) {
-                return (0, fileNo)
-            }
-        } else if items.count == 2 {
-            if let folderNo = folders.firstIndex(of: String(items[0])) {
-                if let fileNo = files[folderNo].firstIndex(of: String(items[1])) {
-                    return (folderNo, fileNo)
-                }
+    func getTitle(fileId: String) -> String {
+        for folderIx in 0...foldersId.count {
+            if let fileIx = filesId[folderIx].firstIndex(of: fileId) {
+                return files[folderIx][fileIx]
             }
         }
-       return nil
-     }
+        return "???"
+    }
+    
+    func index(folderId: String, fileId: String) -> (folderNo:Int, fileNo:Int)? {
+        if let folderNo = self.foldersId.firstIndex(of: folderId) {
+            if let fileNo = self.filesId[folderNo].firstIndex(of: fileId) {
+                return (folderNo, fileNo)
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
 
-    func clear() {
+    func logout() {
+        drive.logout()
         folders = []
         files = [[]]
+        attributes = [[]]
     }
     
     func filenameWithoutExt(byIndexPath: IndexPath) -> String {
@@ -111,19 +147,22 @@ class Entries {
         attributes[atIndexPath.section][atIndexPath.row] = attr
     }
 
-    static func filenameFromPath(_ path: String) -> String {
-        let items = path.split(separator: "/")
-        return removeExtension(String(items.last ?? ""))
+    static func removeExtension(_ name: String) -> String {
+        if name.hasSuffix(Entries.MARKDOWN_EXT) {
+            return String(name.prefix(name.count - 3))
+        } else {
+            return name
+        }
     }
 
-    static func isMarkdown(_ path: String) -> Bool {
-        return path.hasSuffix(".md")
+    static func addExtension(_ name: String) -> String {
+        if name.hasSuffix(Entries.MARKDOWN_EXT) {
+            return name
+        } else {
+            return name + Entries.MARKDOWN_EXT
+        }
     }
     
-    static func removeExtension(_ path: String) -> String {
-        return isMarkdown(path) ? String(path.prefix(path.count - 3)) : path
-   }
-
     var dump :  String {
         return "folder: \(folders)\nfiles: \(files)"
     }
@@ -133,7 +172,7 @@ class Entries {
     
     private func findFolder(_ path: String) -> Int {
         for i in (1..<folders.count) {
-            if path.hasPrefix(Entries.PREFIX_DIR + folders[i].lowercased()) {
+            if path.hasPrefix(containerUrl.path + "/" + folders[i]) {
                 return i
             }
         }
@@ -141,19 +180,22 @@ class Entries {
     }
     
     // ---------------------------
+
     struct FileAttribute: Codable {
-        let path: String
+        let folder: String
+        let file: String
         let color: String
     }
 
     private func decodeAttributesJson(_ jsonString: String) {
         let data = jsonString.data(using: .utf8) ?? Data()
-        let fileAttributes = try! JSONDecoder().decode([FileAttribute].self, from: data)
+        let fileAttributes = try? JSONDecoder().decode([FileAttribute].self, from: data)
 
-        fileAttributes.forEach { attr in
-            if let indices = index(byPathname: attr.path) {
-                self.attributes[indices.folderNo][indices.fileNo] = ["color": attr.color]
-            }
+        fileAttributes?.forEach { attr in
+            let folderNo = self.folders.firstIndex(of: attr.folder)
+            let fileNo = self.files[folderNo!].firstIndex(of: attr.file)
+
+            self.attributes[folderNo!][fileNo!] = ["color": attr.color]
         }
     }
     
@@ -162,12 +204,13 @@ class Entries {
         for folderNo in 0..<folders.count {
             for fileNo in 0..<files[folderNo].count {
                 if let color = self.attributes[folderNo][fileNo]["color"] {
-                   attrs.append(FileAttribute(path: self.pathname(folderNo: folderNo, fileNo: fileNo), color: color))
+                    attrs.append(FileAttribute(folder: folders[folderNo], file: files[folderNo][fileNo], color: color))
                 }
             }
         }
-        
+
         let data = try! JSONEncoder().encode(attrs)
         return String(data: data, encoding: .utf8) ?? ""
     }
+    
 }

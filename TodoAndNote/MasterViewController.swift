@@ -12,9 +12,9 @@ class MasterViewController: UITableViewController {
 
     var activityIndicatorView = UIActivityIndicatorView()
     var detailViewController: DetailViewController? = nil
-    var entries = Entries()
-    private let dropbox = Dropbox.shared
+    var entries = Entries.shared
     private var lastIndexPath: IndexPath?
+    private var firstOpen = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,27 +25,26 @@ class MasterViewController: UITableViewController {
         }
         
         NotificationCenter.default.addObserver(forName: .reloadEntries, object: nil, queue: OperationQueue.main, using: { notification in
-                self.reloadEntries()
+            self.reloadEntries {
+                NotificationCenter.default.post(name: .reloadDocument, object: self.entries.firstOpenFileId)
+            }
         })
         activityIndicatorView.style = .whiteLarge
         activityIndicatorView.color = .black
         self.navigationController?.view.addSubview(activityIndicatorView)
-        activityIndicatorView.startAnimating()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
         super.viewWillAppear(animated)
         activityIndicatorView.center = view.center
-   }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        reloadEntries(complete: { self.activityIndicatorView.stopAnimating() })
     }
 
     @IBAction func pushMenuButton(_ sender: Any) {
         let action = UIAlertController(title: "Menu", message: nil, preferredStyle:  .actionSheet)
+        action.addAction(UIAlertAction(title: "Reload", style: .default, handler: { action in
+           self.reloadEntries()
+        }))
         action.addAction(UIAlertAction(title: "Logout", style: .default, handler: { action in
             self.logout()
         }))
@@ -62,23 +61,25 @@ class MasterViewController: UITableViewController {
     }
 
     @IBAction func unwindToTop(segue: UIStoryboardSegue) {
-        if let popover = segue.source as? AddPopoverViewController, let pathname = popover.filePathname {
+        if let popover = segue.source as? AddPopoverViewController,
+            let fileName = popover.fileName, let folderId = popover.folderId {
             
-            print("return  \(pathname)")
-            dropbox.uploadContent(pathname: pathname, content: "", complete: {
-                self.reloadEntries(complete: {
-                    if let indices = self.entries.index(byPathname: pathname) {
-                        print(indices)
+            print("return  \(folderId)/\(fileName)")
+            self.entries.create(fileName, folderId: folderId) {fileId in
+                self.reloadEntries {
+                    if let indices = self.entries.index(folderId: folderId, fileId: fileId) {
+                        // print(indices)
                         self.tableView.selectRow(at: IndexPath(row: indices.fileNo, section: indices.folderNo), animated: false, scrollPosition: .none)
                         self.performSegue(withIdentifier: "showDetail", sender: nil)
                     }
-                })
-             })
-        } else if let popover = segue.source as? TagPopoverViewController, let fileListCell = popover.fileListCell,
+                }
+            }
+          } else if let popover = segue.source as? TagPopoverViewController, let fileListCell = popover.fileListCell,
             let indexPath = self.lastIndexPath {
             entries.setFileColorName(atIndexPath: indexPath, colorName: fileListCell.tagColor)
             self.tableView.reloadData()
-            dropbox.uploadContent(pathname: Entries.ATTRIBUTES_FILE, content: entries.encodeAttributesJson(), complete: { print("-- write attr")})
+            self.entries.writeAttributes()
+            print("-- write attr")
         }
     }
     
@@ -87,8 +88,7 @@ class MasterViewController: UITableViewController {
     private func logout() {
         let alert = UIAlertController(title: "Logout", message: "Are your sure?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
-            Dropbox.shared.logout()
-            self.entries.clear()
+            self.entries.logout()
             self.tableView.reloadData()
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -113,21 +113,20 @@ class MasterViewController: UITableViewController {
     private func deleteFile(_ indexPath: IndexPath) {
         let alert = UIAlertController(title: "Delete", message: "Are your sure?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
-            self.dropbox.deleteFile(pathname: self.entries.pathname(folderNo: indexPath.section, fileNo: indexPath.row),
-                                    complete: { self.reloadEntries() })
+            self.entries.delete(fileId: self.entries.filesId[indexPath.section][indexPath.row])
+            self.reloadEntries()
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
      }
     
     private func backupFile(_ indexPath: IndexPath) {
-        let path = self.entries.pathname(folderNo: indexPath.section, fileNo: indexPath.row)
-        let backupPtah = self.entries.backupPathname(folderNo: indexPath.section, fileNo: indexPath.row)
-        self.dropbox.downloadContent(pathname: path, complete: { (content) in
-            self.dropbox.uploadContent(pathname: backupPtah, content: content, complete: {
-                print("backupd")
+        self.entries.read(fileId: self.entries.filesId[indexPath.section][indexPath.row]) { content in
+            self.entries.createBackup(self.entries.files[indexPath.section][indexPath.row],
+                                completion: { fileId in
+                                    self.entries.write(fileId: fileId, content: content)
             })
-        })
+        }
     }
 
     // MARK: - Segues
@@ -136,7 +135,7 @@ class MasterViewController: UITableViewController {
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.filePathname = entries.pathname(folderNo: indexPath.section, fileNo: indexPath.row)
+                controller.fileId = entries.filesId[indexPath.section][indexPath.row]
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
                 splitViewController?.preferredDisplayMode = UIDevice.current.orientation.isLandscape ? .allVisible : .primaryHidden
@@ -206,14 +205,11 @@ class MasterViewController: UITableViewController {
     }
 
     private func reloadEntries(complete: (() -> Void)? = nil) {
-        if dropbox.isAuthorized() {
-            self.dropbox.getEnties(complete: { entries in
-                self.dropbox.downloadContent(pathname: Entries.ATTRIBUTES_FILE, complete: { attributes in
-                    self.entries = Entries(entries: entries, attributeJson: attributes)
-                    self.tableView.reloadData()
-                    complete?()
-                })
-            })
+        self.activityIndicatorView.startAnimating()
+        self.entries.reload{
+            self.tableView.reloadData()
+            complete?()
+            self.activityIndicatorView.stopAnimating()
         }
     }
 }

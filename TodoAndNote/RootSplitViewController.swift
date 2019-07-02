@@ -11,9 +11,13 @@ import UIKit
 class RootSplitViewController: UISplitViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        Dropbox.shared.authorize(controller: self, logined: {
-            NotificationCenter.default.post(name: .reloadEntries, object: nil)
-        })
+        let drive = GoogleDrive.shared
+        if !drive.isAuthorized() {
+            let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "loginStoryboardID")
+            if let loginViewController = loginViewController {
+                self.present(loginViewController, animated: true, completion: nil)
+            }
+        }
     }
 
     override func viewDidLoad() {

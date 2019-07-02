@@ -9,17 +9,33 @@
     <body>
         <div id="content"></div>
         <script>
-            function checkbox_callback() {
-                document.querySelectorAll("input[type=checkbox]").forEach(function(e) {
+            const checkbox_callback = () => {
+                document.querySelectorAll("input[type=checkbox]").forEach(e => {
                     e.removeAttribute("disabled");
                 });
 
-                document.querySelectorAll("input[type=checkbox]").forEach(function(e) {
-                    e.addEventListener("change", function(e) {
-                        var data = Number(e.target.checked) + e.target.parentNode.textContent;
-                        webkit.messageHandlers.changeCheckbox.postMessage(data);
+                document.querySelectorAll("input[type=checkbox]").forEach(e => {
+                    e.addEventListener("change", event => {
+                        const postion = Array.from(document.querySelectorAll("input[type=checkbox]")).
+                                           findIndex((checkbox) => checkbox == event.target) + 1
+                        const data = postion * 10 + Number(event.target.checked)
+                        webkit.messageHandlers.changeCheckbox.postMessage(data)
                     });
                 });
+            }
+            const printLog = s => { window.webkit.messageHandlers.printLog.postMessage("" + s) }
+            const rendererEx = new marked.Renderer()
+            rendererEx.listitem = text => {
+                var text2 = text
+                var tail = ""
+                const ulPos = text.indexOf("<ul>")
+                if (ulPos >= 0) {
+                    text2 = text.substr(0, ulPos)
+                    tail = text.substr(ulPos)
+                }
+                const r = text2.match(/^(.*?)%(red|blue|yellow|green)%\s*(.*)$/)
+                return r ? `<li>${r[1]}<span style="color: ${r[2]}">${r[3]}</span>${tail}</li>` :
+                           `<li>${text}</li>`
             }
         </script>
     </body>

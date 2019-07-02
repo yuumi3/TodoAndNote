@@ -10,8 +10,9 @@
 import UIKit
 
 class AddPopoverViewController: UITableViewController {
-    var entries = Entries()
-    var filePathname: String?
+    var entries = Entries.shared
+    var folderId: String?
+    var fileName: String?
     private var folderIndex: Int?
     private var filename: String?
 
@@ -28,7 +29,8 @@ class AddPopoverViewController: UITableViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let ix = folderIndex, let name = filename {
-            filePathname = entries.pathname(folderNo: ix, filename: name, addExtention: ".md")
+            folderId = entries.foldersId[ix]
+            fileName   = Entries.addExtension(name)
         }
    }
 

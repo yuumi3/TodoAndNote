@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,14 +17,13 @@
 		1B3F462521707D71003A884A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B3F462321707D71003A884A /* Main.storyboard */; };
 		1B3F462721707D72003A884A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B3F462621707D72003A884A /* Assets.xcassets */; };
 		1B3F462A21707D72003A884A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B3F462821707D72003A884A /* LaunchScreen.storyboard */; };
-		1B3F46342170868D003A884A /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3F46322170868D003A884A /* Alamofire.framework */; };
-		1B3F46352170868D003A884A /* SwiftyDropbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3F46332170868D003A884A /* SwiftyDropbox.framework */; };
-		1B3F46382170A864003A884A /* Dropbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3F46372170A864003A884A /* Dropbox.swift */; };
 		1B3F463A2170C74C003A884A /* Entries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3F46392170C74C003A884A /* Entries.swift */; };
 		1B557F1C218AFEDA005CBF12 /* TagPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B557F1B218AFEDA005CBF12 /* TagPopoverViewController.swift */; };
 		1BA2573E2182E8A20076B8D1 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2573D2182E8A20076B8D1 /* Notification.swift */; };
 		1BA25742218349FB0076B8D1 /* FileListTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA25741218349FB0076B8D1 /* FileListTableCell.swift */; };
 		1BCFB2B3217F53930024F0E6 /* AddPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCFB2B2217F53930024F0E6 /* AddPopoverViewController.swift */; };
+		1BD9313F22B3C197005030B6 /* GoogleDrive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD9313E22B3C197005030B6 /* GoogleDrive.swift */; };
+		1BFF8E5F22B4C8FF0025A8ED /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF8E5E22B4C8FF0025A8ED /* LoginViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,12 +41,47 @@
 		1B3F462B21707D72003A884A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1B3F46322170868D003A884A /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		1B3F46332170868D003A884A /* SwiftyDropbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyDropbox.framework; path = Carthage/Build/iOS/SwiftyDropbox.framework; sourceTree = "<group>"; };
-		1B3F46372170A864003A884A /* Dropbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dropbox.swift; sourceTree = "<group>"; };
 		1B3F46392170C74C003A884A /* Entries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entries.swift; sourceTree = "<group>"; };
 		1B557F1B218AFEDA005CBF12 /* TagPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagPopoverViewController.swift; sourceTree = "<group>"; };
+		1B6A8B8321DBAA970025C961 /* IQKeyboardManagerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IQKeyboardManagerSwift.framework; path = Carthage/Build/iOS/IQKeyboardManagerSwift.framework; sourceTree = "<group>"; };
+		1B6A8B8621DBB5760025C961 /* IQKeyboardManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IQKeyboardManager.m; sourceTree = "<group>"; };
+		1B6A8B8721DBB5760025C961 /* IQKeyboardReturnKeyHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IQKeyboardReturnKeyHandler.m; sourceTree = "<group>"; };
+		1B6A8B8921DBB5760025C961 /* IQKeyboardManagerConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQKeyboardManagerConstants.h; sourceTree = "<group>"; };
+		1B6A8B8A21DBB5760025C961 /* IQKeyboardManagerConstantsInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQKeyboardManagerConstantsInternal.h; sourceTree = "<group>"; };
+		1B6A8B8C21DBB5760025C961 /* IQKeyboardManager.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IQKeyboardManager.bundle; sourceTree = "<group>"; };
+		1B6A8B8E21DBB5760025C961 /* IQBarButtonItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IQBarButtonItem.m; sourceTree = "<group>"; };
+		1B6A8B8F21DBB5760025C961 /* IQUIView+IQKeyboardToolbar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "IQUIView+IQKeyboardToolbar.m"; sourceTree = "<group>"; };
+		1B6A8B9021DBB5760025C961 /* IQPreviousNextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQPreviousNextView.h; sourceTree = "<group>"; };
+		1B6A8B9121DBB5760025C961 /* IQToolbar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IQToolbar.m; sourceTree = "<group>"; };
+		1B6A8B9221DBB5760025C961 /* IQTitleBarButtonItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQTitleBarButtonItem.h; sourceTree = "<group>"; };
+		1B6A8B9321DBB5760025C961 /* IQPreviousNextView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IQPreviousNextView.m; sourceTree = "<group>"; };
+		1B6A8B9421DBB5760025C961 /* IQBarButtonItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQBarButtonItem.h; sourceTree = "<group>"; };
+		1B6A8B9521DBB5760025C961 /* IQUIView+IQKeyboardToolbar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IQUIView+IQKeyboardToolbar.h"; sourceTree = "<group>"; };
+		1B6A8B9621DBB5760025C961 /* IQToolbar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQToolbar.h; sourceTree = "<group>"; };
+		1B6A8B9721DBB5760025C961 /* IQTitleBarButtonItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IQTitleBarButtonItem.m; sourceTree = "<group>"; };
+		1B6A8B9921DBB5760025C961 /* IQUIView+Hierarchy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "IQUIView+Hierarchy.m"; sourceTree = "<group>"; };
+		1B6A8B9A21DBB5760025C961 /* IQUIScrollView+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IQUIScrollView+Additions.h"; sourceTree = "<group>"; };
+		1B6A8B9B21DBB5760025C961 /* IQNSArray+Sort.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "IQNSArray+Sort.m"; sourceTree = "<group>"; };
+		1B6A8B9C21DBB5760025C961 /* IQUITextFieldView+Additions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "IQUITextFieldView+Additions.m"; sourceTree = "<group>"; };
+		1B6A8B9D21DBB5760025C961 /* IQUIViewController+Additions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "IQUIViewController+Additions.m"; sourceTree = "<group>"; };
+		1B6A8B9E21DBB5760025C961 /* IQNSArray+Sort.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IQNSArray+Sort.h"; sourceTree = "<group>"; };
+		1B6A8B9F21DBB5760025C961 /* IQUIScrollView+Additions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "IQUIScrollView+Additions.m"; sourceTree = "<group>"; };
+		1B6A8BA021DBB5760025C961 /* IQUIView+Hierarchy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IQUIView+Hierarchy.h"; sourceTree = "<group>"; };
+		1B6A8BA121DBB5760025C961 /* IQUITextFieldView+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IQUITextFieldView+Additions.h"; sourceTree = "<group>"; };
+		1B6A8BA221DBB5760025C961 /* IQUIViewController+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IQUIViewController+Additions.h"; sourceTree = "<group>"; };
+		1B6A8BA421DBB5760025C961 /* IQTextView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IQTextView.m; sourceTree = "<group>"; };
+		1B6A8BA521DBB5760025C961 /* IQTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQTextView.h; sourceTree = "<group>"; };
+		1B6A8BA621DBB5760025C961 /* IQKeyboardReturnKeyHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQKeyboardReturnKeyHandler.h; sourceTree = "<group>"; };
+		1B6A8BA721DBB5760025C961 /* IQKeyboardManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IQKeyboardManager.h; sourceTree = "<group>"; };
+		1B6A8BA821DBB59E0025C961 /* IQKeyboardManager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IQKeyboardManager.framework; path = Carthage/Build/iOS/IQKeyboardManager.framework; sourceTree = "<group>"; };
 		1BA2573D2182E8A20076B8D1 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		1BA25741218349FB0076B8D1 /* FileListTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileListTableCell.swift; sourceTree = "<group>"; };
 		1BCFB2B2217F53930024F0E6 /* AddPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPopoverViewController.swift; sourceTree = "<group>"; };
+		1BD9313E22B3C197005030B6 /* GoogleDrive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleDrive.swift; sourceTree = "<group>"; };
+		1BFF8E5E22B4C8FF0025A8ED /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		3ADE1EAE770F581EC537BCF0 /* Pods-TodoAndNote.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodoAndNote.debug.xcconfig"; path = "Target Support Files/Pods-TodoAndNote/Pods-TodoAndNote.debug.xcconfig"; sourceTree = "<group>"; };
+		D71F2F7342D65CCE67FCDF72 /* Pods_TodoAndNote.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TodoAndNote.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1CC0B737C0397C5060DF528 /* Pods-TodoAndNote.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodoAndNote.release.xcconfig"; path = "Target Support Files/Pods-TodoAndNote/Pods-TodoAndNote.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,8 +89,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B3F46342170868D003A884A /* Alamofire.framework in Frameworks */,
-				1B3F46352170868D003A884A /* SwiftyDropbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +101,7 @@
 				1B3F461C21707D71003A884A /* TodoAndNote */,
 				1B3F461B21707D71003A884A /* Products */,
 				1B3F46312170868C003A884A /* Frameworks */,
+				48A8DE3BC601F11C1EBEA217 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -89,11 +122,12 @@
 				1B3F462121707D71003A884A /* DetailViewController.swift */,
 				1BCFB2B2217F53930024F0E6 /* AddPopoverViewController.swift */,
 				1B557F1B218AFEDA005CBF12 /* TagPopoverViewController.swift */,
+				1BFF8E5E22B4C8FF0025A8ED /* LoginViewController.swift */,
 				1BA25741218349FB0076B8D1 /* FileListTableCell.swift */,
 				1B208481217FFED300EC377B /* TextFieldTableCell.swift */,
 				1BA2573D2182E8A20076B8D1 /* Notification.swift */,
 				1B3F46392170C74C003A884A /* Entries.swift */,
-				1B3F46372170A864003A884A /* Dropbox.swift */,
+				1BD9313E22B3C197005030B6 /* GoogleDrive.swift */,
 				1B3F462621707D72003A884A /* Assets.xcassets */,
 				1B3F462321707D71003A884A /* Main.storyboard */,
 				1B3F462821707D72003A884A /* LaunchScreen.storyboard */,
@@ -107,10 +141,100 @@
 		1B3F46312170868C003A884A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1B6A8BA821DBB59E0025C961 /* IQKeyboardManager.framework */,
+				1B6A8B8521DBB5760025C961 /* IQKeyboardManager */,
+				1B6A8B8321DBAA970025C961 /* IQKeyboardManagerSwift.framework */,
 				1B3F46322170868D003A884A /* Alamofire.framework */,
 				1B3F46332170868D003A884A /* SwiftyDropbox.framework */,
+				D71F2F7342D65CCE67FCDF72 /* Pods_TodoAndNote.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1B6A8B8521DBB5760025C961 /* IQKeyboardManager */ = {
+			isa = PBXGroup;
+			children = (
+				1B6A8B8621DBB5760025C961 /* IQKeyboardManager.m */,
+				1B6A8B8721DBB5760025C961 /* IQKeyboardReturnKeyHandler.m */,
+				1B6A8B8821DBB5760025C961 /* Constants */,
+				1B6A8B8B21DBB5760025C961 /* Resources */,
+				1B6A8B8D21DBB5760025C961 /* IQToolbar */,
+				1B6A8B9821DBB5760025C961 /* Categories */,
+				1B6A8BA321DBB5760025C961 /* IQTextView */,
+				1B6A8BA621DBB5760025C961 /* IQKeyboardReturnKeyHandler.h */,
+				1B6A8BA721DBB5760025C961 /* IQKeyboardManager.h */,
+			);
+			name = IQKeyboardManager;
+			path = Carthage/Checkouts/IQKeyboardManager/IQKeyboardManager;
+			sourceTree = "<group>";
+		};
+		1B6A8B8821DBB5760025C961 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				1B6A8B8921DBB5760025C961 /* IQKeyboardManagerConstants.h */,
+				1B6A8B8A21DBB5760025C961 /* IQKeyboardManagerConstantsInternal.h */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		1B6A8B8B21DBB5760025C961 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1B6A8B8C21DBB5760025C961 /* IQKeyboardManager.bundle */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		1B6A8B8D21DBB5760025C961 /* IQToolbar */ = {
+			isa = PBXGroup;
+			children = (
+				1B6A8B8E21DBB5760025C961 /* IQBarButtonItem.m */,
+				1B6A8B8F21DBB5760025C961 /* IQUIView+IQKeyboardToolbar.m */,
+				1B6A8B9021DBB5760025C961 /* IQPreviousNextView.h */,
+				1B6A8B9121DBB5760025C961 /* IQToolbar.m */,
+				1B6A8B9221DBB5760025C961 /* IQTitleBarButtonItem.h */,
+				1B6A8B9321DBB5760025C961 /* IQPreviousNextView.m */,
+				1B6A8B9421DBB5760025C961 /* IQBarButtonItem.h */,
+				1B6A8B9521DBB5760025C961 /* IQUIView+IQKeyboardToolbar.h */,
+				1B6A8B9621DBB5760025C961 /* IQToolbar.h */,
+				1B6A8B9721DBB5760025C961 /* IQTitleBarButtonItem.m */,
+			);
+			path = IQToolbar;
+			sourceTree = "<group>";
+		};
+		1B6A8B9821DBB5760025C961 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				1B6A8B9921DBB5760025C961 /* IQUIView+Hierarchy.m */,
+				1B6A8B9A21DBB5760025C961 /* IQUIScrollView+Additions.h */,
+				1B6A8B9B21DBB5760025C961 /* IQNSArray+Sort.m */,
+				1B6A8B9C21DBB5760025C961 /* IQUITextFieldView+Additions.m */,
+				1B6A8B9D21DBB5760025C961 /* IQUIViewController+Additions.m */,
+				1B6A8B9E21DBB5760025C961 /* IQNSArray+Sort.h */,
+				1B6A8B9F21DBB5760025C961 /* IQUIScrollView+Additions.m */,
+				1B6A8BA021DBB5760025C961 /* IQUIView+Hierarchy.h */,
+				1B6A8BA121DBB5760025C961 /* IQUITextFieldView+Additions.h */,
+				1B6A8BA221DBB5760025C961 /* IQUIViewController+Additions.h */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		1B6A8BA321DBB5760025C961 /* IQTextView */ = {
+			isa = PBXGroup;
+			children = (
+				1B6A8BA421DBB5760025C961 /* IQTextView.m */,
+				1B6A8BA521DBB5760025C961 /* IQTextView.h */,
+			);
+			path = IQTextView;
+			sourceTree = "<group>";
+		};
+		48A8DE3BC601F11C1EBEA217 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3ADE1EAE770F581EC537BCF0 /* Pods-TodoAndNote.debug.xcconfig */,
+				E1CC0B737C0397C5060DF528 /* Pods-TodoAndNote.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -120,10 +244,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1B3F462E21707D72003A884A /* Build configuration list for PBXNativeTarget "TodoAndNote" */;
 			buildPhases = (
+				0C55A329F21A5C7F167CD93A /* [CP] Check Pods Manifest.lock */,
 				1B3F461621707D71003A884A /* Sources */,
 				1B3F461721707D71003A884A /* Frameworks */,
 				1B3F461821707D71003A884A /* Resources */,
-				1B3F4636217086A4003A884A /* ShellScript */,
+				423A1722B6D46EE53C1683CD /* [CP] Embed Pods Frameworks */,
+				200CFD110E2CAA8A1337CE06 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -146,6 +272,7 @@
 				TargetAttributes = {
 					1B3F461921707D71003A884A = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -183,7 +310,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1B3F4636217086A4003A884A /* ShellScript */ = {
+		0C55A329F21A5C7F167CD93A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -191,16 +318,53 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/SwiftyDropbox.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TodoAndNote-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		200CFD110E2CAA8A1337CE06 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TodoAndNote/Pods-TodoAndNote-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TodoAndNote/Pods-TodoAndNote-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TodoAndNote/Pods-TodoAndNote-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		423A1722B6D46EE53C1683CD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TodoAndNote/Pods-TodoAndNote-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TodoAndNote/Pods-TodoAndNote-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TodoAndNote/Pods-TodoAndNote-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -209,14 +373,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BFF8E5F22B4C8FF0025A8ED /* LoginViewController.swift in Sources */,
 				1BCFB2B3217F53930024F0E6 /* AddPopoverViewController.swift in Sources */,
 				1B557F1C218AFEDA005CBF12 /* TagPopoverViewController.swift in Sources */,
 				1B3F462221707D71003A884A /* DetailViewController.swift in Sources */,
+				1BD9313F22B3C197005030B6 /* GoogleDrive.swift in Sources */,
 				1BA2573E2182E8A20076B8D1 /* Notification.swift in Sources */,
 				1B208482217FFED300EC377B /* TextFieldTableCell.swift in Sources */,
 				1B3F462021707D71003A884A /* MasterViewController.swift in Sources */,
 				1B3F463A2170C74C003A884A /* Entries.swift in Sources */,
-				1B3F46382170A864003A884A /* Dropbox.swift in Sources */,
 				1B3F461E21707D71003A884A /* AppDelegate.swift in Sources */,
 				1BA25742218349FB0076B8D1 /* FileListTableCell.swift in Sources */,
 				1B086A022180AFF5004360D9 /* RootSplitViewController.swift in Sources */,
@@ -296,7 +461,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -351,7 +516,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -363,44 +528,42 @@
 		};
 		1B3F462F21707D72003A884A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3ADE1EAE770F581EC537BCF0 /* Pods-TodoAndNote.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LPBR3RZ973;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = TodoAndNote/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ey-office.TodoAndNote";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		1B3F463021707D72003A884A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E1CC0B737C0397C5060DF528 /* Pods-TodoAndNote.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LPBR3RZ973;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = TodoAndNote/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ey-office.TodoAndNote";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
